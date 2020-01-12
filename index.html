@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru_RU">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +8,29 @@
 
     <link rel="icon" href="favicon.png" type="image/png">
 
+    <meta name="description" content="Песни, тексты, аккорды, видео со служений церкви Христа Спасителя!">
+    
+    <meta name="keywords" content="песни, прославление, поклонение, аккорды, церковь, Христа Спасителя, Кременчуг">
+
+    
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://worship-song.github.io/">
+    <meta property="og:title" content="Песни ц.Христа Спасителя">
+    <meta property="og:site_name" content="Песни ц.Христа Спасителя">
+    <meta property="og:description" content="Песни, тексты, аккорды, видео со служений церкви Христа Спасителя!">
+    <meta property="og:locale" content="ru_RU">
+    <meta property="og:image" content="img/facebook_og.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:description" content="Песни, тексты, аккорды, видео со служений церкви Христа Спасителя!">
+    <meta name="twitter:title" content="Песни ц.Христа Спасителя">
+    <meta name="twitter:image" content="img/twitter_og.jpg">
+
+
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=1">
+    <link rel="stylesheet" href="custom.css?v=2">
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -70,16 +91,12 @@
         <transition name="fade">
             <div class="popup" v-show="popup">
                 
-                <button class="btn_back btn btn-lg btn-light border-0 rounded-circle" @click="popup=false">&larr;</button>
-                <button class="btn_close btn btn-lg btn-light border-0 rounded-circle" @click="popup=false">&cross;</button>
-
-                <br><br><br>
-
                 <div class="row justify-content-center">
                     <div class="col-md-8">
-                        <div class="card m-2">
-                            <div class="card-header">
-                                <b>{{song_title}}</b>
+                        <div class="card m-3">
+                            <div class="card-header d-flex align-items-center text-center py-1 pr-1">
+                                <span class="mr-auto font-weight-bold">{{song_title}}</span>
+                                <button class="btn btn-secondary rounded-circle ml-auto" @click="popup=false">&#10005;</button>
                             </div>
                             <div class="card-body pre-format">
                                 <b>{{song_text}}</b>
@@ -87,8 +104,6 @@
                         </div>
                     </div>
                 </div>
-
-                <br><br><br>
 
             </div>
         </transition>
