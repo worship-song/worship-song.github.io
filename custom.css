@@ -24,6 +24,7 @@
     height: 16px;
     position: relative;
     top: 3px;
+    margin: 0 5px 0 0;
     background-image: url('youtube.svg');
     background-position: center;
     background-size: contain;

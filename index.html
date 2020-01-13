@@ -30,7 +30,7 @@
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=2">
+    <link rel="stylesheet" href="custom.css?v=3">
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -62,25 +62,16 @@
         <!-- TABLE -->
         <div class="card shadow-sm m-2">
             <table class="table-sm table-striped table-hover table-responsive-sm m-0">
-                <thead>
-                    <tr>
-                        <th scope="col">№</th>
-                        <th scope="col">Название</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-
                 <tbody>
                     <tr v-for="(item, index) in songs" :key="'song_'+index" v-show="item[0].substring(0,1) === letter || letter === 'all'">
                         <th scope="row">{{index+1}}</th>
-                        <td><a class="h_name" :href="item[1]" target="_blank" v-if="item[1] && item[0]"><span class="youtube"></span> <b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a></td>
-                        <td><a :href="item[2]" target="_blank" v-if="item[2]"><span class="youtube"></span> v2</a></td>
-                        <td><a :href="item[3]" target="_blank" v-if="item[3]"><span class="youtube"></span> v3</a></td>
-                        <td><a :href="item[4]" target="_blank" v-if="item[4]"><span class="youtube"></span> v4</a></td>
-                        <td><button class="btn btn-sm btn-success" v-if="item[5]" @click="popup=true; get_text(index);">Текст</button></td>
+                        <td>
+                            <a class="h_name" :href="item[1]" target="_blank" v-if="item[1] && item[0]"><span class="youtube"></span><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a>
+                            <a :href="item[2]" target="_blank" v-if="item[2]"><span class="youtube ml-4"></span>v2</a>
+                            <a :href="item[3]" target="_blank" v-if="item[3]"><span class="youtube ml-4"></span>v3</a>
+                            <a :href="item[4]" target="_blank" v-if="item[4]"><span class="youtube ml-4"></span>v4</a>
+                        </td>
+                        <td><button class="btn btn-sm btn-success" v-if="item[5]" @click="popup=true; get_text(index);" :data-id="index">Текст</button></td>
                     </tr>
                 </tbody>
             </table>

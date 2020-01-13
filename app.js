@@ -18,10 +18,24 @@ var app = new Vue({
             //=== hightlight search words ===
             var context = document.querySelectorAll(".h_name");
             var instance = new Mark(context);
+
+            //clear previous marks
             instance.unmark();
+
+            //create new marks
             if(this.search.length>1){
-                instance.mark(this.search, {'acrossElements': true});
+                instance.mark(this.search, {"acrossElements": true, "synonyms": {"е": "ё"}});
             }
+
+            //find first mark and scroll to it
+            var first_mark = document.querySelector("mark");
+            setTimeout(()=>{
+                if(first_mark){
+                    first_mark.scrollIntoView({behavior: "smooth"});
+                } else {
+                    window.scrollTo({top: 0, behavior: "smooth"});
+                }
+            }, 100);
         }
     },
 
