@@ -89,8 +89,12 @@
                                 <span class="mr-auto font-weight-bold">{{song_title}}</span>
                                 <button class="btn btn-secondary rounded-circle ml-auto" @click="popup=false">&#10005;</button>
                             </div>
-                            <div class="card-body pre-format">
-                                <b>{{song_text}}</b>
+                            <div class="card-body font-weight-bold">
+                                <span class="pre-format">{{song_text}}</span>
+                                <br>
+                                <div class="text-right">
+                                    <button class="btn btn-sm btn-secondary my-2" @click="copy_to_clipboard(song_title, song_text)">Копировать</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,6 +105,6 @@
 
     </div>
 
-    <script src="app.js?v=3"></script>
+    <script src="app.js?v=4"></script>
 </body>
 </html>

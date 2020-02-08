@@ -64,6 +64,14 @@ var app = new Vue({
         get_text(index){
             this.song_title = this.songs[index][0];
             this.song_text = this.songs[index][5];
+        },
+
+        copy_to_clipboard(title, text){
+            let $temp = $("<textarea></textarea>");
+            $("body").append($temp);
+            $temp.val("=== "+title.toUpperCase()+" ===\r\n\r\n"+text).select();
+            document.execCommand("copy");
+            $temp.remove();
         }
     }
 });
