@@ -9,7 +9,8 @@ var app = new Vue({
             letters: [],
             search: '',
             song_title: '',
-            song_text: ''
+            song_text: '',
+            copied: false
         }
     },
 
@@ -62,6 +63,7 @@ var app = new Vue({
 
     methods: {
         get_text(index){
+            this.copied = false;
             this.song_title = this.songs[index][0];
             this.song_text = this.songs[index][5];
         },
@@ -72,6 +74,7 @@ var app = new Vue({
             $temp.val("=== "+title.toUpperCase()+" ===\r\n\r\n"+text).select();
             document.execCommand("copy");
             $temp.remove();
+            this.copied = true;
         }
     }
 });
