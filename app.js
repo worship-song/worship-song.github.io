@@ -10,7 +10,14 @@ var app = new Vue({
             search: '',
             song_title: '',
             song_text: '',
-            copied: false
+            song_chords: '',
+            chords_up:   ['A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A', 'B', 'D', 'E', 'G'],
+            chords:      ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'Ab', 'Bb', 'Db', 'Eb', 'Gb'],
+            chords_down: ['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G', 'A', 'C', 'D', 'F'],
+            transposed: 0,
+            copied: false,
+            updated: false,
+            failed: false
         }
     },
 
@@ -37,35 +44,42 @@ var app = new Vue({
                     window.scrollTo({top: 0, behavior: "smooth"});
                 }
             }, 100);
+        },
+
+        transposed: function(value){
+            if(value >= 12 || value <= -12){
+                this.transposed = 0;
+            }
         }
     },
 
     mounted() {
-        var api_key = "AIzaSyArcu39UU0RqtdRyuT_zaqCpgYM-qQITYE";
-        var sheet_id = "1jNoICtKyk6eOwivBTMs4yDNSsFx_36kUhRW5AgzKkh8";
-        var sheet_name = "Список песен";
-        var range = "!A2:F100";
-        
-        var url = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name+range+"?key="+api_key;
-        axios.get(url).then(response => {
-            this.songs = response.data.values;
-            this.songs.forEach(item => {
-                if(!this.letters.includes(item[0].substring(0,1))){
-                    this.letters.push(item[0].substring(0,1));
-                }
-            });
-        }).catch(error => {
-            this.songs = [];
-            this.letters = [];
-            console.log(error);
-        });
+        if(StorageTest() && ('local_songs' in localStorage)){
+            //Take songs from LocalStorage
+            this.GetSongsLocal();
+        } else {
+            //Take songs from Google Sheets (Internet connection required)
+            this.GetSongsFromInternet();
+        }
     },
 
     methods: {
         get_text(index){
+            this.transposed = 0;
             this.copied = false;
             this.song_title = this.songs[index][0];
             this.song_text = this.songs[index][5];
+            this.song_chords = this.songs[index][6];//.replace(/[ABCDEFG](#|b)?(m|maj|min|sus|dur)?(1|2|3|4|5|6|7|8|9|10|11|12|13)?/g,
+                                //(match) => {
+                                    //console.log('['+match+']');
+                                    //return '['+match+']';
+                                //});
+            
+            if(StorageTest()){
+                let key_in_storage = parseInt(localStorage.getItem(this.song_title+'_key')) || 0;
+                if(key_in_storage > 0) this.transUp(Math.abs(key_in_storage));
+                if(key_in_storage < 0) this.transDown(Math.abs(key_in_storage));
+            }
         },
 
         copy_to_clipboard(title, text){
@@ -75,6 +89,84 @@ var app = new Vue({
             document.execCommand("copy");
             $temp.remove();
             this.copied = true;
+        },
+
+        transUp(steps){
+            for(let i=0; i<steps; i++){
+                this.song_chords = this.song_chords.replace(/[ABCDEFG](#|b)?/g,
+                                (match) => {
+                                    return this.chords_up[this.chords.indexOf(match)] || match;
+                                });
+                this.transposed++;
+            }
+            
+            if(StorageTest()) localStorage.setItem(this.song_title+'_key', this.transposed);
+        },
+
+        transDown(steps){
+            for(let i=0; i<steps; i++){
+                this.song_chords = this.song_chords.replace(/[ABCDEFG](#|b)?/g,
+                                (match) => {
+                                    return this.chords_down[this.chords.indexOf(match)] || match;
+                                });
+                this.transposed--;
+            }
+            
+            if(StorageTest()) localStorage.setItem(this.song_title+'_key', this.transposed);
+        },
+
+        GenerateLetters(){
+            this.songs.forEach(item => {
+                if(!this.letters.includes(item[0].substring(0,1))){
+                    this.letters.push(item[0].substring(0,1));
+                }
+            });
+        },
+
+        GetSongsLocal(){
+            if(StorageTest() && ('local_songs' in localStorage)){
+                this.songs = JSON.parse(localStorage.getItem('local_songs'));
+                this.GenerateLetters();
+            }
+        },
+
+        GetSongsFromInternet(){
+            this.updated = false;
+            this.failed = false;
+
+            let api_key = "AIzaSyArcu39UU0RqtdRyuT_zaqCpgYM-qQITYE";
+            let sheet_id = "1jNoICtKyk6eOwivBTMs4yDNSsFx_36kUhRW5AgzKkh8";
+            let sheet_name = "Список песен";
+            let range = "!A2:G100";
+            
+            let url = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name+range+"?key="+api_key;
+            axios.get(url).then(response => {
+                this.songs = response.data.values;
+                if(StorageTest()) localStorage.setItem('local_songs', JSON.stringify(response.data.values));
+                this.GenerateLetters();
+                this.updated = true;
+                setTimeout(()=>{this.updated = false}, 3000);
+            }).catch(error => {
+                this.songs = [];
+                this.letters = [];
+                this.GetSongsLocal();
+                this.failed = true;
+                setTimeout(()=>{this.failed = false}, 3000);
+                console.log(error);
+            });
         }
     }
 });
+
+
+
+//====== LocalStorage Available? ======//
+function StorageTest(){
+    try {
+        localStorage.setItem('test_rtdox', 'test_rtdox');
+        localStorage.removeItem('test_rtdox');
+        return true;
+    } catch(e) {
+        return false;
+    }
+}
