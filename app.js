@@ -10,6 +10,7 @@ var app = new Vue({
             search: '',
             song_title: '',
             song_text: '',
+            song_text_marked: '',
             song_chords: '',
             chords_up:   ['A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A', 'B', 'D', 'E', 'G'],
             chords:      ['A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'Ab', 'Bb', 'Db', 'Eb', 'Gb'],
@@ -24,19 +25,19 @@ var app = new Vue({
     watch: {
         search: function(){
             //=== hightlight search words ===
-            var context = document.querySelectorAll(".h_name");
-            var instance = new Mark(context);
+            let context = document.querySelectorAll(".h_name");
+            let instance = new Mark(context);
 
             //clear previous marks
             instance.unmark();
 
             //create new marks
-            if(this.search.length>1){
+            if(this.search.length>2){
                 instance.mark(this.search, {"acrossElements": true, "synonyms": {"е": "ё"}});
             }
 
             //find first mark and scroll to it
-            var first_mark = document.querySelector("mark");
+            let first_mark = document.querySelector("mark");
             setTimeout(()=>{
                 if(first_mark){
                     first_mark.scrollIntoView({behavior: "smooth"});
@@ -68,18 +69,45 @@ var app = new Vue({
             this.transposed = 0;
             this.copied = false;
             this.song_title = this.songs[index][0];
+
             this.song_text = this.songs[index][5];
-            this.song_chords = this.songs[index][6];//.replace(/[ABCDEFG](#|b)?(m|maj|min|sus|dur)?(1|2|3|4|5|6|7|8|9|10|11|12|13)?/g,
-                                //(match) => {
-                                    //console.log('['+match+']');
-                                    //return '['+match+']';
-                                //});
+            if(this.song_text){
+                this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ):?/gi, (match) => { return '<b>'+match+'</b>'; });
+                
+                setTimeout(()=>{
+                    let context = document.querySelectorAll(".popup_song_text");
+                    let instance = new Mark(context);
+                    //clear previous marks
+                    instance.unmark();
+                    //create new marks
+                    if(this.search.length>2){
+                        instance.mark(this.search, {"acrossElements": true, "synonyms": {"е": "ё"}});
+                    }
+                }, 300);
+            }
+
+            this.song_chords = this.songs[index][6];
+            if(this.song_chords){
+                this.song_chords = this.song_chords.replace(/[ABCDEFG](#|b)?(m|maj|min|sus|dur)?(2|3|4|5|6|7|8|9|10|11|12|13)?/g, (match) => { return '<b>'+match+'</b>'; });
+            }
             
             if(StorageTest()){
                 let key_in_storage = parseInt(localStorage.getItem(this.song_title+'_key')) || 0;
                 if(key_in_storage > 0) this.transUp(Math.abs(key_in_storage));
                 if(key_in_storage < 0) this.transDown(Math.abs(key_in_storage));
             }
+
+            this.popup = true;
+
+            window.history.pushState('text-open', null, '');
+
+            $(window).on('popstate', () => this.ClosePopup());
+        },
+
+        ClosePopup(){
+            $(window).off('popstate');
+            this.popup = false;
+            window.history.back();
         },
 
         copy_to_clipboard(title, text){
