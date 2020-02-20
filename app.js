@@ -8,6 +8,7 @@ var app = new Vue({
             letter: 'all',
             letters: [],
             search: '',
+            current_song: 0,
             song_title: '',
             song_text: '',
             song_text_marked: '',
@@ -66,6 +67,7 @@ var app = new Vue({
 
     methods: {
         get_text(index){
+            this.current_song = index;
             this.transposed = 0;
             this.copied = false;
             this.song_title = this.songs[index][0];
@@ -89,6 +91,12 @@ var app = new Vue({
             this.song_chords = this.songs[index][6];
             if(this.song_chords){
                 this.song_chords = this.song_chords.replace(/[ABCDEFG](#|b)?(m|maj|min|sus|dur)?(2|3|4|5|6|7|8|9|10|11|12|13)?/g, (match) => { return '<b>'+match+'</b>'; });
+
+                this.song_chords = this.song_chords
+                                    .replace(/\[/g, (match) => { return '<b class="text-gray">'; })
+                                    .replace(/\]/g, (match) => { return '</b>'; })
+                                    .replace(/\(/g, (match) => { return '<i class="text-gray">'; })
+                                    .replace(/\)/g, (match) => { return '</i>'; });
             }
             
             if(StorageTest()){

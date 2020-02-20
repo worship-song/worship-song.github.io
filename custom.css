@@ -62,3 +62,7 @@ tr:hover .h_name {
 .pre-format {
     white-space: pre-wrap;
 }
+
+.text-gray {
+    color: #5F5F5F;
+}

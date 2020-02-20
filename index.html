@@ -30,7 +30,7 @@
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=3">
+    <link rel="stylesheet" href="custom.css?v=4">
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -72,12 +72,12 @@
                     <tr v-for="(item, index) in songs" :key="'song_'+index" v-show="item[0].substring(0,1) === letter || letter === 'all'" :class="{'bg-warning': (item[5] && search.length>2 && item[5].toLowerCase().search(search.toLowerCase())>-1)}">
                         <th scope="row">{{index+1}}</th>
                         <td>
-                            <a class="h_name" :href="item[1]" target="_blank" v-if="item[1] && item[0]"><span class="youtube"></span><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a>
+                            <a class="h_name" :href="item[1]" :target="item[1] ? '_blank' : '_self'"><span class="youtube" v-if="item[1]"></span><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a>
                             <a :href="item[2]" target="_blank" v-if="item[2]"><span class="youtube ml-4"></span>v2</a>
                             <a :href="item[3]" target="_blank" v-if="item[3]"><span class="youtube ml-4"></span>v3</a>
                             <a :href="item[4]" target="_blank" v-if="item[4]"><span class="youtube ml-4"></span>v4</a>
                         </td>
-                        <td><button class="btn btn-sm btn-success" v-if="item[5]" @click="get_text(index)" :data-id="index">Текст</button></td>
+                        <td><button class="btn btn-sm btn-success" v-if="item[5]" @click="get_text(index)" :data-id="index">Текст<span v-if="item[6]">&nbsp;&#9835;</span></button></td>
                     </tr>
                 </tbody>
             </table>
@@ -93,27 +93,33 @@
                         <div class="card m-3">
 
                             <div class="card-header d-flex align-items-center text-center py-1 pr-1">
-                                <span class="mr-auto font-weight-bold">{{song_title}}</span>
+                                <span class="mr-auto font-weight-bold">{{song_title}} ({{current_song+1}}/{{songs.length}})</span>
                                 <button class="btn btn-secondary rounded-circle ml-auto" @click="ClosePopup">&#10005;</button>
                             </div>
 
                             <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <button v-if="current_song>0" class="btn btn-sm btn-success rounded-circle" @click="get_text(current_song-1)">&larr;</button>
+                                    <span>&nbsp;</span>
+                                    <button v-if="current_song<songs.length-1" class="btn btn-sm btn-success rounded-circle" @click="get_text(current_song+1)">&rarr;</button>
+                                </div>
                                 <span class="popup_song_text pre-format" v-html="song_text_marked"></span>
-                                <br>
                                 <div class="text-right">
                                     <button class="btn btn-sm my-2" :class="copied ? 'btn-success' : 'btn-secondary'" @click="copy_to_clipboard(song_title, song_text)">Копировать<span v-show="copied"> &check;</span></button>
                                 </div>
                                 
-                                <div v-if="song_chords">
+                                <div class="position-relative" v-if="song_chords">
                                     <hr>
 
-                                    <div class="text-right">
-                                        <button class="btn btn-sm rounded-circle px-3" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&uarr;</button>
-                                        <br><span v-show="transposed > 0">+</span><span v-show="transposed != 0">{{transposed}}</span>&nbsp;&nbsp;&nbsp;<br>
-                                        <button class="btn btn-sm rounded-circle px-3" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&darr;</button>
+                                    <div class="text-right position-absolute" style="right:0; top:1.25rem;">
+                                        <button class="btn btn-sm rounded-circle" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&nbsp;&uarr;&nbsp;</button>
+                                        <br><span v-show="transposed > 0">+</span><span v-show="transposed != 0">{{transposed}}</span>&nbsp;&nbsp;<br>
+                                        <button class="btn btn-sm rounded-circle" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&nbsp;&darr;&nbsp;</button>
                                     </div>
 
-                                    <span class="pre-format" v-html="song_chords"></span>
+                                    <div class="pr-5">
+                                        <span class="pre-format" v-html="song_chords"></span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -126,6 +132,6 @@
 
     </div>
 
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=8"></script>
 </body>
 </html>
