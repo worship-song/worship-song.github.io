@@ -4,11 +4,13 @@ var app = new Vue({
     data() {
         return {
             songs: [],
+            current_ministry: [],
             popup: false,
             letter: 'all',
             letters: [],
             search: '',
             current_song: 0,
+            is_song_from_ministry: false,
             song_title: '',
             song_text: '',
             song_text_marked: '',
@@ -66,8 +68,14 @@ var app = new Vue({
     },
 
     methods: {
-        get_text(index){
-            this.current_song = index;
+        get_text(index, index_2){
+            if(index_2 || index_2 === 0){
+                this.is_song_from_ministry = true;
+                this.current_song = index_2;
+            } else {
+                this.is_song_from_ministry = false;
+                this.current_song = index;
+            }
             this.transposed = 0;
             this.copied = false;
             this.song_title = this.songs[index][0];
@@ -164,6 +172,9 @@ var app = new Vue({
                 this.songs = JSON.parse(localStorage.getItem('local_songs'));
                 this.GenerateLetters();
             }
+            if(StorageTest() && ('current_ministry' in localStorage)){
+                this.current_ministry = JSON.parse(localStorage.getItem('current_ministry'));
+            }
         },
 
         GetSongsFromInternet(){
@@ -172,13 +183,15 @@ var app = new Vue({
 
             let api_key = "AIzaSyArcu39UU0RqtdRyuT_zaqCpgYM-qQITYE";
             let sheet_id = "1jNoICtKyk6eOwivBTMs4yDNSsFx_36kUhRW5AgzKkh8";
+            
+            //All Songs Get From Google Sheets
             let sheet_name = "Список песен";
             let range = "!A2:G100";
-            
             let url = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name+range+"?key="+api_key;
+
             axios.get(url).then(response => {
                 this.songs = response.data.values;
-                if(StorageTest()) localStorage.setItem('local_songs', JSON.stringify(response.data.values));
+                if(StorageTest()) localStorage.setItem('local_songs', JSON.stringify(this.songs));
                 this.GenerateLetters();
                 this.updated = true;
                 setTimeout(()=>{this.updated = false}, 3000);
@@ -188,6 +201,29 @@ var app = new Vue({
                 this.GetSongsLocal();
                 this.failed = true;
                 setTimeout(()=>{this.failed = false}, 3000);
+                console.log(error);
+            });
+
+            //Get only songs to current ministry
+            let sheet_name_2 = "Ближайшее служение";
+            let range_2 = "!A1:A15";
+            let url_2 = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name_2+range_2+"?key="+api_key;
+
+            axios.get(url_2).then(response => {
+                this.current_ministry = response.data.values;
+
+                this.current_ministry.forEach((item) => {
+                    item[1] = -1;
+                    this.songs.forEach((obj, index) => {
+                        if(obj[0] === item[0]){
+                            item[1] = index;
+                        }
+                    });
+                });
+
+                if(StorageTest()) localStorage.setItem('current_ministry', JSON.stringify(this.current_ministry));
+            }).catch(error => {
+                this.current_ministry = [];
                 console.log(error);
             });
         }
