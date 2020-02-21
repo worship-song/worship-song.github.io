@@ -61,6 +61,11 @@ var app = new Vue({
         if(StorageTest() && ('local_songs' in localStorage)){
             //Take songs from LocalStorage
             this.GetSongsLocal();
+            //загружаем сразу с кеша, а потом проверяем
+            //если дата обновления старше 1 часа то подтянуть с инета свежее
+            if(Date.now() > parseInt(localStorage.getItem('update_time'), 10)+3600000){
+                this.GetSongsFromInternet();
+            }
         } else {
             //Take songs from Google Sheets (Internet connection required)
             this.GetSongsFromInternet();
@@ -82,7 +87,7 @@ var app = new Vue({
 
             this.song_text = this.songs[index][5];
             if(this.song_text){
-                this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ):?/gi, (match) => { return '<b>'+match+'</b>'; });
+                this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ|концовка):?/gi, (match) => { return '<b>'+match+'</b>'; });
                 
                 setTimeout(()=>{
                     let context = document.querySelectorAll(".popup_song_text");
@@ -108,7 +113,7 @@ var app = new Vue({
             }
             
             if(StorageTest()){
-                let key_in_storage = parseInt(localStorage.getItem(this.song_title+'_key')) || 0;
+                let key_in_storage = parseInt(localStorage.getItem(this.song_title+'_key'), 10) || 0;
                 if(key_in_storage > 0) this.transUp(Math.abs(key_in_storage));
                 if(key_in_storage < 0) this.transDown(Math.abs(key_in_storage));
             }
@@ -191,7 +196,10 @@ var app = new Vue({
 
             axios.get(url).then(response => {
                 this.songs = response.data.values;
-                if(StorageTest()) localStorage.setItem('local_songs', JSON.stringify(this.songs));
+                if(StorageTest()){
+                    localStorage.setItem('local_songs', JSON.stringify(this.songs));
+                    localStorage.setItem('update_time', Date.now());
+                }
                 this.GenerateLetters();
                 this.updated = true;
                 setTimeout(()=>{this.updated = false}, 3000);
