@@ -63,7 +63,7 @@ var app = new Vue({
             this.GetSongsLocal();
             //загружаем сразу с кеша, а потом проверяем
             //если дата обновления старше 1 часа то подтянуть с инета свежее
-            if(Date.now() > parseInt(localStorage.getItem('update_time'), 10)+3600000){
+            if(!('update_time' in localStorage) || Date.now() > parseInt(localStorage.getItem('update_time'), 10)+3600000){
                 this.GetSongsFromInternet();
             }
         } else {
@@ -75,17 +75,29 @@ var app = new Vue({
     methods: {
         get_text(index, index_2){
             if(index_2 || index_2 === 0){
+                //ближайшее служение
                 this.is_song_from_ministry = true;
                 this.current_song = index_2;
+                if(this.current_ministry[index_2][1]<0){
+                    this.song_title = this.current_ministry[index_2][0];
+                    this.song_text = "";
+                    this.song_chords = "";
+                } else {
+                    this.song_title = this.songs[index][0];
+                    this.song_text = this.songs[index][5];
+                    this.song_chords = this.songs[index][6];
+                }
             } else {
+                //общий список
                 this.is_song_from_ministry = false;
                 this.current_song = index;
+                this.song_title = this.songs[index][0];
+                this.song_text = this.songs[index][5];
+                this.song_chords = this.songs[index][6];
             }
             this.transposed = 0;
             this.copied = false;
-            this.song_title = this.songs[index][0];
-
-            this.song_text = this.songs[index][5];
+            
             if(this.song_text){
                 this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ|концовка):?/gi, (match) => { return '<b>'+match+'</b>'; });
                 
@@ -100,8 +112,7 @@ var app = new Vue({
                     }
                 }, 300);
             }
-
-            this.song_chords = this.songs[index][6];
+            
             if(this.song_chords){
                 this.song_chords = this.song_chords.replace(/[ABCDEFG](#|b)?(m|maj|min|sus|dur)?(2|3|4|5|6|7|8|9|10|11|12|13)?/g, (match) => { return '<b>'+match+'</b>'; });
 
