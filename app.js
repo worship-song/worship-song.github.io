@@ -120,7 +120,9 @@ var app = new Vue({
                                     .replace(/\[/g, (match) => { return '<b class="text-gray">'; })
                                     .replace(/\]/g, (match) => { return '</b>'; })
                                     .replace(/\(/g, (match) => { return '<i class="text-gray">'; })
-                                    .replace(/\)/g, (match) => { return '</i>'; });
+                                    .replace(/\)/g, (match) => { return '</i>'; })
+                                    .replace(/\{/g, (match) => { return '<div class="text-monospace small overflow-auto"><div style="width:1500px;">'; })
+                                    .replace(/\}/g, (match) => { return '</div></div>'; });
             }
             
             if(StorageTest()){
@@ -205,7 +207,14 @@ var app = new Vue({
             let range = "!A2:G100";
             let url = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name+range+"?key="+api_key;
 
+            //Get only songs to current ministry
+            let sheet_name_2 = "Ближайшее служение";
+            let range_2 = "!A1:A15";
+            let url_2 = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name_2+range_2+"?key="+api_key;
+
+            //All Songs Get From Google Sheets
             axios.get(url).then(response => {
+                //console.log('global axios');
                 this.songs = response.data.values;
                 if(StorageTest()){
                     localStorage.setItem('local_songs', JSON.stringify(this.songs));
@@ -214,35 +223,32 @@ var app = new Vue({
                 this.GenerateLetters();
                 this.updated = true;
                 setTimeout(()=>{this.updated = false}, 3000);
+
+                //Get only songs to current ministry
+                axios.get(url_2).then(response => {
+                    //console.log('small axios');
+                    this.current_ministry = response.data.values;
+    
+                    this.current_ministry.forEach((item) => {
+                        item[1] = -1;
+                        this.songs.forEach((obj, index) => {
+                            if(obj[0] === item[0]){
+                                item[1] = index;
+                            }
+                        });
+                    });
+    
+                    if(StorageTest()) localStorage.setItem('current_ministry', JSON.stringify(this.current_ministry));
+                }).catch(error => {
+                    this.current_ministry = [];
+                    console.log(error);
+                });
             }).catch(error => {
                 this.songs = [];
                 this.letters = [];
                 this.GetSongsLocal();
                 this.failed = true;
                 setTimeout(()=>{this.failed = false}, 3000);
-                console.log(error);
-            });
-
-            //Get only songs to current ministry
-            let sheet_name_2 = "Ближайшее служение";
-            let range_2 = "!A1:A15";
-            let url_2 = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name_2+range_2+"?key="+api_key;
-
-            axios.get(url_2).then(response => {
-                this.current_ministry = response.data.values;
-
-                this.current_ministry.forEach((item) => {
-                    item[1] = -1;
-                    this.songs.forEach((obj, index) => {
-                        if(obj[0] === item[0]){
-                            item[1] = index;
-                        }
-                    });
-                });
-
-                if(StorageTest()) localStorage.setItem('current_ministry', JSON.stringify(this.current_ministry));
-            }).catch(error => {
-                this.current_ministry = [];
                 console.log(error);
             });
         }
