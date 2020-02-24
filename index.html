@@ -67,7 +67,7 @@
 
         <!-- TABLE -->
         <div class="card rounded-good shadow-sm m-2">
-            <table class="table-sm rounded-good table-striped table-hover table-responsive-sm m-0">
+            <table class="table-sm rounded-good table-striped table-hover overflow-hidden m-0">
                 <tbody>
                     <tr v-for="(item, index) in songs" :key="'song_'+index" v-show="item[0].substring(0,1) === letter || letter === 'all'" :class="{'bg-warning': (item[5] && search.length>2 && item[5].toLowerCase().search(search.toLowerCase())>-1)}">
                         <th scope="row">{{index+1}}</th>
@@ -91,7 +91,7 @@
         <div class="text-center px-3 pt-2"><h5>Ближайшее служение</h5></div>
         <div class="card rounded-good shadow-sm m-2">
             <div v-if="!current_ministry || !current_ministry.length" class="text-center text-gray small font-weight-bold p-2">Список пока-что пуст, приходите позже :)</div>
-            <table v-if="current_ministry && current_ministry.length" class="table-sm rounded-good table-striped table-hover table-responsive-sm m-0">
+            <table v-if="current_ministry && current_ministry.length" class="table-sm rounded-good table-striped table-hover overflow-hidden m-0">
                 <tbody>
                     <tr v-for="(item, index) in current_ministry" :key="'song_key_'+index" :class="{'bg-warning': (songs[item[1]][5] && search.length>2 && songs[item[1]][5].toLowerCase().search(search.toLowerCase())>-1)}">
                         <th scope="row">{{index+1}}</th>
