@@ -66,3 +66,23 @@ tr:hover .h_name {
 .text-gray {
     color: #5F5F5F;
 }
+
+.rounded-circle-left {
+    border-radius: 25px 0 0 25px !important;
+}
+
+.rounded-circle-right {
+    border-radius: 0 25px 25px 0 !important;
+}
+
+.rounded-circle-top {
+    border-radius: 25px 25px 0 0 !important;
+}
+
+.rounded-circle-bottom {
+    border-radius: 0 0 25px 25px !important;
+}
+
+.rounded-good {
+    border-radius: 25px !important;
+}

@@ -40,6 +40,7 @@ var app = new Vue({
             }
 
             //find first mark and scroll to it
+            /*
             let first_mark = document.querySelector("mark");
             setTimeout(()=>{
                 if(first_mark){
@@ -48,6 +49,7 @@ var app = new Vue({
                     window.scrollTo({top: 0, behavior: "smooth"});
                 }
             }, 100);
+            */
         },
 
         transposed: function(value){
@@ -228,15 +230,19 @@ var app = new Vue({
                 axios.get(url_2).then(response => {
                     //console.log('small axios');
                     this.current_ministry = response.data.values;
-    
-                    this.current_ministry.forEach((item) => {
-                        item[1] = -1;
-                        this.songs.forEach((obj, index) => {
-                            if(obj[0] === item[0]){
-                                item[1] = index;
-                            }
+                    
+                    if(this.current_ministry){
+                        this.current_ministry.forEach((item) => {
+                            item[1] = -1;
+                            this.songs.forEach((obj, index) => {
+                                if(obj[0] === item[0]){
+                                    item[1] = index;
+                                }
+                            });
                         });
-                    });
+                    } else {
+                        this.current_ministry = [];
+                    }
     
                     if(StorageTest()) localStorage.setItem('current_ministry', JSON.stringify(this.current_ministry));
                 }).catch(error => {
