@@ -30,7 +30,7 @@
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=6">
+    <link rel="stylesheet" href="custom.css?v=7">
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -109,31 +109,34 @@
 
         <!-- POPUP -->
         <transition name="fade">
-            <div class="popup" v-show="popup" @click.self="ClosePopup" style="display: none;">
+            <div class="popup" v-show="popup" style="display: none;">
                 
-                <div class="row justify-content-center" @click.self="ClosePopup">
+                <div class="row justify-content-center h-100">
                     <div class="col-md-12">
-                        <div class="card m-2" style="max-height: calc(100vh - 1rem);">
+                        <div class="card rounded-0 h-100">
 
-                            <div class="card-header d-flex align-items-center text-center py-1 px-2">
+                            <div class="card-header bg-light d-flex align-items-start text-center position-sticky sticky-top py-1 px-2">
                                 <!-- SONG TITLE and CLOSE BUTTON -->
-                                <span v-if="!is_song_from_ministry" class="mr-auto font-weight-bold">{{song_title}} ({{current_song+1}}/{{songs.length}})</span>
-                                <span v-if="is_song_from_ministry" class="mr-auto font-weight-bold">{{song_title}} ({{current_song+1}}/{{current_ministry.length}})</span>
-                                <button class="btn btn-secondary rounded-circle ml-auto" @click="ClosePopup">&#10005;</button>
-                            </div>
+                                <span v-if="!is_song_from_ministry" class="mr-auto font-weight-bold small">{{song_title}} ({{current_song+1}}/{{songs.length}})</span>
+                                <span v-if="is_song_from_ministry" class="mr-auto font-weight-bold small">{{song_title}} ({{current_song+1}}/{{current_ministry.length}})</span>
 
-                            <div class="card-body overflow-auto pt-0 pb-2 px-2">
                                 <!-- NEXT / PREV buttons for Main List -->
-                                <div v-if="!is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_song-1)">&larr;</button>
-                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_song+1)">&rarr;</button>
+                                <div v-if="!is_song_from_ministry" class="d-inline-flex ml-auto pl-3">
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-left" @click="get_text(current_song-1)">&larr;</button>
+                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-right" @click="get_text(current_song+1)">&rarr;</button>
                                 </div>
 
                                 <!-- NEXT / PREV buttons for Current Ministry -->
-                                <div v-if="is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&larr;</button>
-                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&rarr;</button>
+                                <div v-if="is_song_from_ministry" class="d-inline-flex ml-auto pl-3">
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&larr;</button>
+                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&rarr;</button>
                                 </div>
+
+                                <button class="btn btn-sm btn-secondary rounded-circle ml-3" @click="ClosePopup">&#10005;</button>
+                            </div>
+
+                            <div class="card-body overflow-auto p-2">
+                                
 
                                 <!-- SONG TEXT -->
                                 <span v-if="song_text" class="popup_song_text pre-format" v-html="song_text_marked"></span>
@@ -180,6 +183,6 @@
 
     </div>
 
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
 </body>
 </html>

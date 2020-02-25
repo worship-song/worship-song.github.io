@@ -81,6 +81,7 @@ var app = new Vue({
 
     methods: {
         get_text(index, index_2){
+            $("html, body").css("overflow", "hidden");
             if(index_2 || index_2 === 0){
                 //ближайшее служение
                 this.is_song_from_ministry = true;
@@ -159,6 +160,7 @@ var app = new Vue({
         },
 
         ClosePopup(){
+            $("html, body").css("overflow", "auto");
             $(window).off('popstate');
             this.popup = false;
             window.history.back();
