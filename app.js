@@ -21,7 +21,12 @@ var app = new Vue({
             transposed: 0,
             copied: false,
             updated: false,
-            failed: false
+            failed: false,
+            vid_block: false,
+            vid1: '',
+            vid2: '',
+            vid3: '',
+            vid4: ''
         }
     },
 
@@ -84,10 +89,18 @@ var app = new Vue({
                     this.song_title = this.current_ministry[index_2][0];
                     this.song_text = "";
                     this.song_chords = "";
+                    this.vid1 = "";
+                    this.vid2 = "";
+                    this.vid3 = "";
+                    this.vid4 = "";
                 } else {
                     this.song_title = this.songs[index][0];
                     this.song_text = this.songs[index][5];
                     this.song_chords = this.songs[index][6];
+                    this.vid1 = this.songs[index][1];
+                    this.vid2 = this.songs[index][2];
+                    this.vid3 = this.songs[index][3];
+                    this.vid4 = this.songs[index][4];
                 }
             } else {
                 //общий список
@@ -96,9 +109,14 @@ var app = new Vue({
                 this.song_title = this.songs[index][0];
                 this.song_text = this.songs[index][5];
                 this.song_chords = this.songs[index][6];
+                this.vid1 = this.songs[index][1];
+                this.vid2 = this.songs[index][2];
+                this.vid3 = this.songs[index][3];
+                this.vid4 = this.songs[index][4];
             }
             this.transposed = 0;
             this.copied = false;
+            this.vid_block = false;
             
             if(this.song_text){
                 this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ|концовка):?/gi, (match) => { return '<b>'+match+'</b>'; });

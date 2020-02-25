@@ -24,11 +24,20 @@
     height: 16px;
     position: relative;
     top: 3px;
-    margin: 0 5px 0 0;
+    margin: 0;
     background-image: url('youtube.svg');
     background-position: center;
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+.youtube.muted {
+    -webkit-filter: saturate(0) brightness(2.2);
+    filter: saturate(0) brightness(2.2);
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }
 
 td a {

@@ -30,7 +30,7 @@
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=5">
+    <link rel="stylesheet" href="custom.css?v=6">
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -69,18 +69,16 @@
         <div class="card rounded-good shadow-sm m-2">
             <table class="table-sm rounded-good table-striped table-hover overflow-hidden m-0">
                 <tbody>
-                    <tr v-for="(item, index) in songs" :key="'song_'+index" v-show="item[0].substring(0,1) === letter || letter === 'all'" :class="{'bg-warning': (item[5] && search.length>2 && item[5].toLowerCase().search(search.toLowerCase())>-1)}">
-                        <th scope="row">{{index+1}}</th>
+                    <tr v-for="(item, index) in songs" :key="'song_'+index" v-show="item[0].substring(0,1) === letter || letter === 'all'" :class="{'bg-warning': (item[5] && search.length>2 && item[5].toLowerCase().search(search.toLowerCase())>-1)}" class="cursor-pointer" @click="get_text(index)">
+                        <th scope="row" class="text-muted">{{index+1}}</th>
                         <td>
-                            <a v-if="item[1]" class="h_name mr-3" :href="item[1]" target="_blank"><span class="youtube"></span><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a>
-                            <span v-if="!item[1]" class="h_name mr-3"><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</span>
-                            <span class="text-nowrap">
-                                <a :href="item[2]" target="_blank" v-if="item[2]"><span class="youtube"></span>v2</a>
-                                <a :href="item[3]" target="_blank" v-if="item[3]"><span class="youtube ml-3"></span>v3</a>
-                                <a :href="item[4]" target="_blank" v-if="item[4]"><span class="youtube ml-3"></span>v4</a>
-                            </span>
+                            <span class="h_name mr-3"><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</span>
                         </td>
-                        <td><button v-if="item[5] || item[6]" class="btn btn-sm btn-success rounded-good" @click="get_text(index)" :data-id="index">Текст<span v-if="item[6]">&nbsp;&#9835;</span></button></td>
+                        <td class="text-nowrap">
+                            <span v-if="item[1] || item[2] || item[3] || item[4]" class="youtube muted"></span>
+                            <span v-if="item[5]" class="text-muted">&#9776;</span>
+                            <span v-if="item[6]" class="text-muted">&#9835;</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -93,18 +91,16 @@
             <div v-if="!current_ministry || !current_ministry.length" class="text-center text-gray small font-weight-bold p-2">Список пока-что пуст, приходите позже :)</div>
             <table v-if="current_ministry && current_ministry.length" class="table-sm rounded-good table-striped table-hover overflow-hidden m-0">
                 <tbody>
-                    <tr v-for="(item, index) in current_ministry" :key="'song_key_'+index" :class="{'bg-warning': (songs[item[1]][5] && search.length>2 && songs[item[1]][5].toLowerCase().search(search.toLowerCase())>-1)}">
-                        <th scope="row">{{index+1}}</th>
+                    <tr v-for="(item, index) in current_ministry" :key="'song_key_'+index" :class="{'bg-warning': (songs[item[1]][5] && search.length>2 && songs[item[1]][5].toLowerCase().search(search.toLowerCase())>-1)}" class="cursor-pointer" @click="get_text(item[1], index)">
+                        <th scope="row" class="text-muted">{{index+1}}</th>
                         <td>
-                            <a v-if="item[1]>=0 && songs[item[1]][1]" class="h_name mr-3" :href="songs[item[1]][1]" target="_blank"><span class="youtube"></span><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</a>
-                            <span v-if="item[1]<0 || !songs[item[1]][1]" class="h_name mr-3"><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</span>
-                            <span class="text-nowrap">
-                                <a v-if="item[1]>=0 && songs[item[1]][2]" :href="songs[item[1]][2]" target="_blank"><span class="youtube"></span>v2</a>
-                                <a v-if="item[1]>=0 && songs[item[1]][3]" :href="songs[item[1]][3]" target="_blank"><span class="youtube ml-3"></span>v3</a>
-                                <a v-if="item[1]>=0 && songs[item[1]][4]" :href="songs[item[1]][4]" target="_blank"><span class="youtube ml-3"></span>v4</a>
-                            </span>
+                            <span class="h_name mr-3"><b>{{item[0].substring(0,1)}}</b>{{item[0].substring(1)}}</span>
                         </td>
-                        <td><button v-if="item[1]>=0 && (songs[item[1]][5] || songs[item[1]][6])" class="btn btn-sm btn-success rounded-good" @click="get_text(item[1], index)" :data-id="index">Текст<span v-if="item[1]>=0 && songs[item[1]][6]">&nbsp;&#9835;</span></button></td>
+                        <td class="text-nowrap">
+                            <span v-if="item[1]>=0 && (songs[item[1]][1] || songs[item[1]][2] || songs[item[1]][3] || songs[item[1]][4])" class="youtube muted"></span>
+                            <span v-if="item[1]>=0 && songs[item[1]][5]" class="text-muted">&#9776;</span>
+                            <span v-if="item[1]>=0 && songs[item[1]][6]" class="text-muted">&#9835;</span>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -120,34 +116,53 @@
                         <div class="card rounded-good m-2" style="max-height: calc(100vh - 1rem);">
 
                             <div class="card-header d-flex align-items-center text-center py-1 px-2">
+                                <!-- SONG TITLE and CLOSE BUTTON -->
                                 <span v-if="!is_song_from_ministry" class="mr-auto font-weight-bold">{{song_title}} ({{current_song+1}}/{{songs.length}})</span>
                                 <span v-if="is_song_from_ministry" class="mr-auto font-weight-bold">{{song_title}} ({{current_song+1}}/{{current_ministry.length}})</span>
                                 <button class="btn btn-secondary rounded-circle ml-auto" @click="ClosePopup">&#10005;</button>
                             </div>
 
                             <div class="card-body overflow-auto pt-0 pb-2 px-2">
+                                <!-- NEXT / PREV buttons for Main List -->
                                 <div v-if="!is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_song-1)">&larr;</button>
-                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_song+1)">&rarr;</button>
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_song-1)">&#x23F4;</button>
+                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_song+1)">&#x23F5;</button>
                                 </div>
 
+                                <!-- NEXT / PREV buttons for Current Ministry -->
                                 <div v-if="is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&larr;</button>
-                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&rarr;</button>
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&#x23F4;</button>
+                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&#x23F5;</button>
                                 </div>
 
+                                <!-- SONG TEXT -->
                                 <span v-if="song_text" class="popup_song_text pre-format" v-html="song_text_marked"></span>
-                                <div class="text-right">
-                                    <button v-if="song_text.length" class="btn btn-sm rounded-good my-2" :class="copied ? 'btn-success' : 'btn-secondary'" @click="copy_to_clipboard(song_title, song_text)">Копировать<span v-show="copied"> &check;</span></button>
+
+                                <!-- BUTTONS VIDEO & COPY TEXT -->
+                                <div class="d-flex justify-content-between my-3">
+                                    <button v-if="vid1 || vid2 || vid3 || vid4" :class="vid_block ? 'btn-light' : 'btn-success'" class="btn btn-sm rounded-good" @click="vid_block = vid_block ? false : true">Видео / Аудио <span v-if="!vid_block">&#x23F7;</span><span v-if="vid_block">&#x23F6;</span></button>
+                                    <span>&nbsp;</span>
+                                    <button v-if="song_text.length" class="btn btn-sm rounded-good" :class="copied ? 'btn-success' : 'btn-secondary'" @click="copy_to_clipboard(song_title, song_text)">Копировать текст<span v-show="copied"> &check;</span></button>
+                                </div>
+
+                                <!-- VIDEO BLOCK (show / hide) -->
+                                <div v-show="vid_block && (vid1 || vid2 || vid3 || vid4)">
+                                    <div class="d-flex flex-column mb-4">
+                                        <a v-show="vid1" :href="vid1" target="_blank" class="small"><span class="youtube mr-1"></span>{{ vid1 }}</a>
+                                        <a v-show="vid2" :href="vid2" target="_blank" class="small"><span class="youtube mr-1"></span>{{ vid2 }}</a>
+                                        <a v-show="vid3" :href="vid3" target="_blank" class="small"><span class="youtube mr-1"></span>{{ vid3 }}</a>
+                                        <a v-show="vid4" :href="vid4" target="_blank" class="small"><span class="youtube mr-1"></span>{{ vid4 }}</a>
+                                    </div>
                                 </div>
                                 
+                                <!-- CHORDS -->
                                 <div class="position-relative" v-if="song_chords">
                                     <hr>
 
                                     <div class="text-right position-absolute" style="right:0; top:1.25rem;">
-                                        <button class="btn btn-sm rounded-circle-top" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&nbsp;&uarr;&nbsp;</button>
+                                        <button class="btn btn-sm rounded-circle-top" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&#x23F6;</button>
                                         <br><span v-show="transposed > 0">+</span><span v-show="transposed != 0">{{transposed}}</span>&nbsp;&nbsp;<br>
-                                        <button class="btn btn-sm rounded-circle-bottom" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&nbsp;&darr;&nbsp;</button>
+                                        <button class="btn btn-sm rounded-circle-bottom" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&#x23F7;</button>
                                     </div>
 
                                     <div class="pr-5 mb-2" style="min-height: 90px;">
@@ -165,6 +180,6 @@
 
     </div>
 
-    <script src="app.js?v=13"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>
