@@ -125,14 +125,14 @@
                             <div class="card-body overflow-auto pt-0 pb-2 px-2">
                                 <!-- NEXT / PREV buttons for Main List -->
                                 <div v-if="!is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_song-1)">&#x23F4;</button>
-                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_song+1)">&#x23F5;</button>
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_song-1)">&larr;</button>
+                                    <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_song+1)">&rarr;</button>
                                 </div>
 
                                 <!-- NEXT / PREV buttons for Current Ministry -->
                                 <div v-if="is_song_from_ministry" class="d-flex justify-content-end sticky-top pt-1">
-                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&#x23F4;</button>
-                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&#x23F5;</button>
+                                    <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&larr;</button>
+                                    <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&rarr;</button>
                                 </div>
 
                                 <!-- SONG TEXT -->
@@ -140,7 +140,7 @@
 
                                 <!-- BUTTONS VIDEO & COPY TEXT -->
                                 <div class="d-flex justify-content-between my-3">
-                                    <button v-if="vid1 || vid2 || vid3 || vid4" :class="vid_block ? 'btn-light' : 'btn-success'" class="btn btn-sm rounded-good" @click="vid_block = vid_block ? false : true">Видео / Аудио <span v-if="!vid_block">&#x23F7;</span><span v-if="vid_block">&#x23F6;</span></button>
+                                    <button v-if="vid1 || vid2 || vid3 || vid4" :class="vid_block ? 'btn-light' : 'btn-success'" class="btn btn-sm rounded-good" @click="vid_block = vid_block ? false : true">Видео / Аудио <span v-if="!vid_block">&darr;</span><span v-if="vid_block">&uarr;</span></button>
                                     <span>&nbsp;</span>
                                     <button v-if="song_text.length" class="btn btn-sm rounded-good" :class="copied ? 'btn-success' : 'btn-secondary'" @click="copy_to_clipboard(song_title, song_text)">Копировать текст<span v-show="copied"> &check;</span></button>
                                 </div>
@@ -160,9 +160,9 @@
                                     <hr>
 
                                     <div class="text-right position-absolute" style="right:0; top:1.25rem;">
-                                        <button class="btn btn-sm rounded-circle-top" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&#x23F6;</button>
+                                        <button class="btn btn-sm rounded-circle-top" :class="transposed > 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transUp(1)">&nbsp;&uarr;&nbsp;</button>
                                         <br><span v-show="transposed > 0">+</span><span v-show="transposed != 0">{{transposed}}</span>&nbsp;&nbsp;<br>
-                                        <button class="btn btn-sm rounded-circle-bottom" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&#x23F7;</button>
+                                        <button class="btn btn-sm rounded-circle-bottom" :class="transposed < 0 ? 'btn-success' : 'btn-outline-secondary'" @click="transDown(1)">&nbsp;&darr;&nbsp;</button>
                                     </div>
 
                                     <div class="pr-5 mb-2" style="min-height: 90px;">
