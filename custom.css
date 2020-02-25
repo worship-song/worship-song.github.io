@@ -1,3 +1,19 @@
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #DFDFDF;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #9C9C9C;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #28A745; 
+}
+
 /* FADE ANIMATION */
 .fade-enter-active, .fade-leave-active {
     transition: opacity 0.5s ease-in-out;
@@ -61,11 +77,11 @@ a {
 
 a:hover {
     text-decoration: none;
-    color: #f00;
+    color: #F00;
 }
 
 tr:hover .h_name {
-    color: #f00;
+    color: #F00;
 }
 
 .pre-format {
