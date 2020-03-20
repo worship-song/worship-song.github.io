@@ -21,6 +21,10 @@
     opacity: 0;
 }
 
+[v-cloak] {
+    display: none;
+}
+
 .popup {
     position: fixed;
     left: 0;
