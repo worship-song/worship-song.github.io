@@ -5,6 +5,7 @@ var app = new Vue({
         return {
             songs: [],
             current_ministry: [],
+            favourite: [],
             popup: false,
             letter: 'all',
             letters: [],
@@ -65,13 +66,20 @@ var app = new Vue({
     },
 
     mounted() {
-        if(StorageTest() && ('local_songs' in localStorage)){
-            //Take songs from LocalStorage
-            this.GetSongsLocal();
-            //загружаем сразу с кеша, а потом проверяем
-            //если дата обновления старше 1 часа то подтянуть с инета свежее
-            if(!('update_time' in localStorage) || Date.now() > parseInt(localStorage.getItem('update_time'), 10)+3600000){
-                this.GetSongsFromInternet();
+        if(StorageTest()){
+            if('local_songs' in localStorage){
+                //Take songs from LocalStorage
+                this.GetSongsLocal();
+                //загружаем сразу с кеша, а потом проверяем
+                //если дата обновления старше 1 часа то подтянуть с инета свежее
+                if(!('update_time' in localStorage) || Date.now() > parseInt(localStorage.getItem('update_time'), 10)+3600000){
+                    this.GetSongsFromInternet();
+                }
+            }
+            if('fav_songs' in localStorage){
+                this.favourite = JSON.parse(localStorage.getItem('fav_songs'));
+                this.favourite = this.favourite.filter(item => this.songs.find(obj => obj[0]===item));
+                localStorage.setItem('fav_songs', JSON.stringify(this.favourite));
             }
         } else {
             //Take songs from Google Sheets (Internet connection required)
@@ -166,6 +174,15 @@ var app = new Vue({
             window.history.back();
         },
 
+        ToggleFav(){
+            if(this.favourite.includes(this.song_title)){
+                this.favourite.splice(this.favourite.indexOf(this.song_title), 1);
+            } else {
+                this.favourite.push(this.song_title);
+            }
+            if(StorageTest()) localStorage.setItem('fav_songs', JSON.stringify(this.favourite));
+        },
+
         copy_to_clipboard(title, text){
             let $temp = $("<textarea></textarea>");
             $("body").append($temp);
@@ -208,12 +225,14 @@ var app = new Vue({
         },
 
         GetSongsLocal(){
-            if(StorageTest() && ('local_songs' in localStorage)){
-                this.songs = JSON.parse(localStorage.getItem('local_songs'));
-                this.GenerateLetters();
-            }
-            if(StorageTest() && ('current_ministry' in localStorage)){
-                this.current_ministry = JSON.parse(localStorage.getItem('current_ministry'));
+            if(StorageTest()){
+                if('local_songs' in localStorage){
+                    this.songs = JSON.parse(localStorage.getItem('local_songs'));
+                    this.GenerateLetters();
+                }
+                if('current_ministry' in localStorage){
+                    this.current_ministry = JSON.parse(localStorage.getItem('current_ministry'));
+                }
             }
         },
 

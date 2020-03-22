@@ -33,7 +33,7 @@
     width: 100%;
     height: 100%;
     background-color: #DFDFDF;
-    z-index: 1;
+    z-index: 2;
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
@@ -55,6 +55,16 @@
 .youtube.muted {
     -webkit-filter: saturate(0) brightness(2.2);
     filter: saturate(0) brightness(2.2);
+}
+
+.star_fav {
+    font-size: 20px;
+    color: #888;
+}
+
+.star_fav.active {
+    color: orange;
+    text-shadow: 0 0 2px rgba(0,0,0,0.65), 0 0 7px orange;
 }
 
 .cursor-pointer {

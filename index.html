@@ -30,7 +30,7 @@
 
 
     <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="custom.css?v=9">
+    <link rel="stylesheet" href="custom.css?v=10"> <!-- Increase version here -->
 
     <script src="jquery-3.4.1.min.js"></script>
     <script src="popper.min.js"></script>
@@ -38,6 +38,7 @@
     <script src="axios.min.js"></script>
     <script src="mark.min.js"></script>
     <script src="vue.js"></script>
+    <script src="app.js?v=16" defer></script> <!-- Increase version here -->
     
 </head>
 <body>
@@ -61,6 +62,7 @@
         <div class="card rounded-good shadow-sm m-2">
             <div class="form-group m-0">
                 <input type="text" class="form-control text-center border-0 rounded-good font-weight-bold" placeholder="Поиск" v-model="search">
+                <button class="btn btn-success rounded-good border-0 position-absolute" style="right:1px; top:1px; z-index:1;">&rarr;</button>
             </div>
         </div>
         
@@ -78,6 +80,7 @@
                             <span v-if="item[1] || item[2] || item[3] || item[4]" class="youtube muted"></span>
                             <span v-if="item[5]" class="text-muted">&#9776;</span>
                             <span v-if="item[6]" class="text-muted">&#9835;</span>
+                            <span v-if="favourite.includes(item[0])" class="star_fav active">&starf;</span>
                         </td>
                     </tr>
                 </tbody>
@@ -100,6 +103,7 @@
                             <span v-if="item[1]>=0 && (songs[item[1]][1] || songs[item[1]][2] || songs[item[1]][3] || songs[item[1]][4])" class="youtube muted"></span>
                             <span v-if="item[1]>=0 && songs[item[1]][5]" class="text-muted">&#9776;</span>
                             <span v-if="item[1]>=0 && songs[item[1]][6]" class="text-muted">&#9835;</span>
+                            <span v-if="favourite.includes(item[0])" class="star_fav active">&starf;</span>
                         </td>
                     </tr>
                 </tbody>
@@ -115,19 +119,21 @@
                     <div class="col-md-12">
                         <div class="card rounded-0 border-0 h-100">
 
-                            <div class="card-header bg-light d-flex align-items-start text-center position-sticky sticky-top py-1 px-2">
+                            <div class="card-header bg-light d-flex align-items-center text-center position-sticky sticky-top py-1 px-2">
                                 <!-- SONG TITLE and CLOSE BUTTON -->
                                 <span v-if="!is_song_from_ministry" class="mr-auto font-weight-bold small">{{song_title}} ({{current_song+1}}/{{songs.length}})</span>
                                 <span v-if="is_song_from_ministry" class="mr-auto font-weight-bold small">{{song_title}} ({{current_song+1}}/{{current_ministry.length}})</span>
 
+                                <span class="star_fav ml-auto pl-2" :class="(favourite.includes(song_title)) ? 'active' : ''" @click="ToggleFav">{{ (favourite.includes(song_title)) ? '&starf;' : '&star;' }}</span>
+
                                 <!-- NEXT / PREV buttons for Main List -->
-                                <div v-if="!is_song_from_ministry" class="d-inline-flex ml-auto pl-3">
+                                <div v-if="!is_song_from_ministry" class="d-inline-flex pl-3">
                                     <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-left" @click="get_text(current_song-1)">&larr;</button>
                                     <button :disabled="current_song>=songs.length-1" :class="current_song>=songs.length-1 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-right" @click="get_text(current_song+1)">&rarr;</button>
                                 </div>
 
                                 <!-- NEXT / PREV buttons for Current Ministry -->
-                                <div v-if="is_song_from_ministry" class="d-inline-flex ml-auto pl-3">
+                                <div v-if="is_song_from_ministry" class="d-inline-flex pl-3">
                                     <button :disabled="current_song<=0" :class="current_song<=0 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-left" @click="get_text(current_ministry[current_song-1][1], current_song-1)">&larr;</button>
                                     <button :disabled="current_song>=current_ministry.length-1" :class="current_song>=current_ministry.length-1 ? 'btn-secondary' : 'btn-success'" class="btn btn-sm rounded-circle-right" @click="get_text(current_ministry[current_song+1][1], current_song+1)">&rarr;</button>
                                 </div>
@@ -182,7 +188,5 @@
         </transition>
 
     </div>
-
-    <script src="app.js?v=15"></script>
 </body>
 </html>
