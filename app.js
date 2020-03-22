@@ -12,6 +12,7 @@ var app = new Vue({
             search: '',
             current_song: 0,
             is_song_from_ministry: false,
+            is_song_from_fav: false,
             song_title: '',
             song_text: '',
             song_text_marked: '',
@@ -21,6 +22,7 @@ var app = new Vue({
             chords_down: ['G#', 'A', 'A#', 'B', 'C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G', 'A', 'C', 'D', 'F'],
             transposed: 0,
             copied: false,
+            fav_copied: false,
             updated: false,
             failed: false,
             vid_block: false,
@@ -77,7 +79,11 @@ var app = new Vue({
                 }
             }
             if('fav_songs' in localStorage){
-                this.favourite = JSON.parse(localStorage.getItem('fav_songs'));
+                try {
+                    this.favourite = JSON.parse(localStorage.getItem('fav_songs'));
+                } catch (e) {
+                    this.favourite = [];
+                }
                 this.favourite = this.favourite.filter(item => this.songs.find(obj => obj[0]===item));
                 localStorage.setItem('fav_songs', JSON.stringify(this.favourite));
             }
@@ -88,11 +94,24 @@ var app = new Vue({
     },
 
     methods: {
-        get_text(index, index_2){
+        get_text(index, index_2, index_3){
             $("html, body").css("overflow", "hidden");
-            if(index_2 || index_2 === 0){
+            if(index_3 || index_3 === 0){
+                //избранное
+                this.is_song_from_fav = true;
+                this.is_song_from_ministry = false;
+                this.current_song = index_3;
+                this.song_title = this.songs[index][0];
+                this.song_text = this.songs[index][5];
+                this.song_chords = this.songs[index][6];
+                this.vid1 = this.songs[index][1];
+                this.vid2 = this.songs[index][2];
+                this.vid3 = this.songs[index][3];
+                this.vid4 = this.songs[index][4];
+            } else if(index_2 || index_2 === 0){
                 //ближайшее служение
                 this.is_song_from_ministry = true;
+                this.is_song_from_fav = false;
                 this.current_song = index_2;
                 if(this.current_ministry[index_2][1]<0){
                     this.song_title = this.current_ministry[index_2][0];
@@ -114,6 +133,7 @@ var app = new Vue({
             } else {
                 //общий список
                 this.is_song_from_ministry = false;
+                this.is_song_from_fav = false;
                 this.current_song = index;
                 this.song_title = this.songs[index][0];
                 this.song_text = this.songs[index][5];
@@ -159,7 +179,7 @@ var app = new Vue({
                 if(key_in_storage > 0) this.transUp(Math.abs(key_in_storage));
                 if(key_in_storage < 0) this.transDown(Math.abs(key_in_storage));
             }
-
+            
             this.popup = true;
 
             window.history.pushState('text-open', null, '');
@@ -175,6 +195,7 @@ var app = new Vue({
         },
 
         ToggleFav(){
+            this.fav_copied = false;
             if(this.favourite.includes(this.song_title)){
                 this.favourite.splice(this.favourite.indexOf(this.song_title), 1);
             } else {
@@ -190,6 +211,15 @@ var app = new Vue({
             document.execCommand("copy");
             $temp.remove();
             this.copied = true;
+        },
+
+        copy_fav_to_clipboard(){
+            let $temp = $("<textarea></textarea>");
+            $("body").append($temp);
+            $temp.val(this.favourite.join("\r\n")).select();
+            document.execCommand("copy");
+            $temp.remove();
+            this.fav_copied = true;
         },
 
         transUp(steps){
@@ -227,11 +257,19 @@ var app = new Vue({
         GetSongsLocal(){
             if(StorageTest()){
                 if('local_songs' in localStorage){
-                    this.songs = JSON.parse(localStorage.getItem('local_songs'));
+                    try {
+                        this.songs = JSON.parse(localStorage.getItem('local_songs'));
+                    } catch (e) {
+                        this.songs = [];
+                    }
                     this.GenerateLetters();
                 }
                 if('current_ministry' in localStorage){
-                    this.current_ministry = JSON.parse(localStorage.getItem('current_ministry'));
+                    try {
+                        this.current_ministry = JSON.parse(localStorage.getItem('current_ministry'));
+                    } catch (e) {
+                        this.current_ministry = [];
+                    }
                 }
             }
         },
@@ -270,7 +308,7 @@ var app = new Vue({
                     //console.log('small axios');
                     this.current_ministry = response.data.values;
                     
-                    if(this.current_ministry){
+                    if(this.current_ministry && this.current_ministry.length){
                         this.current_ministry.forEach((item) => {
                             item[1] = -1;
                             this.songs.forEach((obj, index) => {
