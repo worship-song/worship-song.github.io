@@ -162,7 +162,7 @@
                                 </div>
 
                                 <!-- STAR of Favourite status -->
-                                <span class="star_fav ml-auto pl-2" :class="(favourite.includes(song_title)) ? 'active' : ''" @click="ToggleFav">{{ (favourite.includes(song_title)) ? '&starf;' : '&star;' }}</span>
+                                <span class="star_fav cursor-pointer ml-auto pl-2" :class="(favourite.includes(song_title)) ? 'active' : ''" @click="ToggleFav">{{ (favourite.includes(song_title)) ? '&starf;' : '&star;' }}</span>
 
                                 <!-- NEXT / PREV buttons for Main List -->
                                 <div v-if="!is_song_from_ministry && !is_song_from_fav" class="d-inline-flex pl-3">
