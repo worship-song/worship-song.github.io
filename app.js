@@ -148,7 +148,7 @@ var app = new Vue({
             this.vid_block = false;
             
             if(this.song_text){
-                this.song_text_marked = this.song_text.replace(/(куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ|концовка):?/gi, (match) => { return '<b>'+match+'</b>'; });
+                this.song_text_marked = this.song_text.replace(/(приспів|брідж|куплет|припев|запев|бридж|мост|кода|coda|проигрыш|вступление|вступ|концовка):?/gi, (match) => { return '<b>'+match+'</b>'; });
                 
                 setTimeout(()=>{
                     let context = document.querySelectorAll(".popup_song_text");
