@@ -283,7 +283,7 @@ var app = new Vue({
             
             //All Songs Get From Google Sheets
             let sheet_name = "Список песен";
-            let range = "!A2:G100";
+            let range = "!A2:G150";
             let url = "https://sheets.googleapis.com/v4/spreadsheets/"+sheet_id+"/values/"+sheet_name+range+"?key="+api_key;
 
             //Get only songs to current ministry
